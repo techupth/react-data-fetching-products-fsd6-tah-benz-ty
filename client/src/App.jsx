@@ -19,11 +19,16 @@ function App() {
     }
   };
 
-  const handleDelete = (thisIndex) => {
-    const newProductProfile = productProfiles.filter((_, index) => {
-      return index !== thisIndex;
-    });
-    setProductProfiles(newProductProfile);
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:4001/products/${id}`);
+      const updatedProfiles = productProfiles.filter(
+        (product) => product.id !== id
+      );
+      setProductProfiles(updatedProfiles);
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
   };
   return (
     <div className="App">
@@ -31,9 +36,9 @@ function App() {
         <h1 className="app-title">Products</h1>
       </div>
       <div className="product-list">
-        {productProfiles.map((products, index) => {
+        {productProfiles.map((products) => {
           return (
-            <div className="product" key={index}>
+            <div className="product" key={products.id}>
               <div className="product-preview">
                 <img
                   src={products.image}
@@ -51,7 +56,7 @@ function App() {
                 className="delete-button"
                 onClick={() => {
                   {
-                    handleDelete(index);
+                    handleDelete(products.id);
                   }
                 }}
               >
